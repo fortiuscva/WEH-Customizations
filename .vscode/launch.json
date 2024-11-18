@@ -1,0 +1,20 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "WEH_US_DEV",
+            "request": "launch",
+            "type": "al",
+            "tenant": "b2a0b453-5fcb-42d7-afd7-be1dc6568d3b",
+            "environmentType": "Sandbox",
+            "environmentName": "WEH_US_DEV",
+            "startupObjectId": 9305,
+            "startupObjectType": "Page",
+            "breakOnError": true,
+            "launchBrowser": true,
+            "enableLongRunningSqlStatements": true,
+            "enableSqlInformationDebugger": true,
+            "schemaUpdateMode": "Synchronize"
+        },        
+    ]
+}
