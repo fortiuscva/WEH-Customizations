@@ -2,6 +2,7 @@ namespace WEHCustomizations.WEHCustomizations;
 
 using Microsoft.Finance.VAT.Setup;
 using Microsoft.Sales.Document;
+using Microsoft.Finance.VAT.Ledger;
 using Microsoft.Foundation.Enums;
 
 report 52100 "WEH Update VAT Calc. Type"
@@ -18,7 +19,7 @@ report 52100 "WEH Update VAT Calc. Type"
             DataItemTableView = where("VAT Calculation Type" = filter(0));
             trigger OnAfterGetRecord()
             begin
-                VATPostingSetup.Validate("VAT Calculation Type", VATPostingSetup."VAT Calculation Type"::"Sales Tax");
+                VATPostingSetup."VAT Calculation Type" := VATPostingSetup."VAT Calculation Type"::"Sales Tax";
                 VATPostingSetup.Modify();
             end;
         }
