@@ -15,7 +15,7 @@ report 52100 "WEH Update VAT Calc. Type"
     {
         dataitem(VATPostingSetup; "VAT Posting Setup")
         {
-
+            DataItemTableView = where("VAT Calculation Type" = filter(0));
             trigger OnAfterGetRecord()
             begin
                 VATPostingSetup.Validate("VAT Calculation Type", VATPostingSetup."VAT Calculation Type"::"Sales Tax");
@@ -42,6 +42,7 @@ report 52100 "WEH Update VAT Calc. Type"
                 SalesLine.Reset();
                 SalesLine.SetRange("Document Type", "Sales Header"."Document Type");
                 SalesLine.SetRange("Document No.", "Sales Header"."No.");
+                SalesLine.SetFilter(Type, '<>%1', SalesLine.Type::" ");
                 SalesLine.SetRange("VAT Calculation Type", SalesLine."VAT Calculation Type"::"Normal VAT");
                 if SalesLine.FindSet() then
                     repeat
