@@ -26,7 +26,7 @@ report 52100 "WEH Update VAT Calc. Type"
 
         dataitem("Sales Header"; "Sales Header")
         {
-            DataItemTableView = where("Document Type" = const(order));
+            DataItemTableView = where("Document Type" = filter('Order|Quote'));
             trigger OnAfterGetRecord()
             var
                 SalesLine: Record "Sales Line";
