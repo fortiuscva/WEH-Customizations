@@ -2,6 +2,7 @@ namespace WEHCustomizations.WEHCustomizations;
 
 using Microsoft.Finance.VAT.Setup;
 using Microsoft.Sales.Document;
+using Microsoft.Service.Document;
 using Microsoft.Finance.VAT.Ledger;
 using Microsoft.Foundation.Enums;
 
@@ -26,7 +27,7 @@ report 52100 "WEH Update VAT Calc. Type"
 
         dataitem("Sales Header"; "Sales Header")
         {
-            DataItemTableView = where("Document Type" = filter('Order|Quote'));
+            //DataItemTableView = where("Document Type" = filter('Order|Quote'));
             trigger OnAfterGetRecord()
             var
                 SalesLine: Record "Sales Line";
@@ -55,11 +56,44 @@ report 52100 "WEH Update VAT Calc. Type"
                     "Sales Header".PerformManualRelease();
             end;
         }
+        dataitem("Service Header"; "Service Header")
+        {
+            trigger OnAfterGetRecord()
+            var
+                ServiceLine: Record "Service Line";
+                ReleaseServiceDoc: Codeunit "Release Service Document";
+                ReleasedServiceOrder: Boolean;
+            begin
+                Clear(ReleasedServiceOrder);
+                if "Service Header"."Release Status" = "Service Header"."Release Status"::"Released to Ship" then begin
+                    ReleaseServiceDoc.PerformManualReopen("Service Header");
+                    ReleasedServiceOrder := true;
+                end;
 
+                ServiceLine.Reset();
+                ServiceLine.SetRange("Document Type", "Service Header"."Document Type");
+                ServiceLine.SetRange("Document No.", "Service Header"."No.");
+                ServiceLine.SetFilter(Type, '<>%1', ServiceLine.Type::" ");
+                ServiceLine.SetRange("VAT Calculation Type", ServiceLine."VAT Calculation Type"::"Normal VAT");
+                if ServiceLine.FindSet() then
+                    repeat
+                        ServiceLine.Validate("VAT Calculation Type", ServiceLine."VAT Calculation Type"::"Sales Tax");
+                        ServiceLine.Modify();
+                    until ServiceLine.Next() = 0;
+
+                if ReleasedServiceOrder then begin
+                    if "Service Header"."Release Status" <> "Service Header"."Release Status"::"Released to Ship" then begin
+                        ReleaseServiceDoc.PerformManualRelease("Service Header");
+                        Commit();
+                    end;
+                end;
+            end;
+        }
     }
 
     trigger OnPostReport()
     begin
         Message('Processed Successfully');
     end;
+
 }
