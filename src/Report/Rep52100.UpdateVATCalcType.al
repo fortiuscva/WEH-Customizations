@@ -89,7 +89,6 @@ report 52100 "WEH Update VAT Calc. Type"
                 end;
             end;
         }
-
     }
 
     trigger OnPostReport()
